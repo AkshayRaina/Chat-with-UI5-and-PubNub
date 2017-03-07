@@ -19,61 +19,25 @@ sap.ui.jsview("chatapp.chat", {
 	 * @memberOf chatapp.chat
 	 */
 	createContent : function(oController) {
-		var oCol1 = new sap.m.Column({
-			header : new sap.m.Label({
-				text : "Name"
-			})
-		});
-		var oCol2 = new sap.m.Column({
-			header : new sap.m.Label({
-				text : "Description"
-			}),
-		});
-		var oCol3 = new sap.m.Column({
-			header : new sap.m.Label({
-				text : "Channel Name"
-			})
-		});
 
-		var oTableItems = new sap.m.ColumnListItem({
-			cells : [ new sap.m.Text({
-				text : "{table>Name}"
-			}), new sap.m.Text({
-				text : "{table>Description}"
-			}), new sap.m.Text({
-				text : "{table>Channel}"
-			}) ]
-		});
-
-		var oTable = new sap.m.Table({
-			columns : [ oCol1, oCol2, oCol3 ]
-		});
-
-		oTable.bindItems({
-			path : "table>/",
-			template : oTableItems
-		});
-		
-		var oTimelineItem = new sap.suite.ui.commons.TimelineItem({
-			dateTime : "Date({chat>one_piece/timestamp})",
-		   	text : "{chat>one_piece/message}",
-			userName : "{chat>one_piece/username}",
-			icon : "sap-icon://person-placeholder"
-		})
-		
 		var oTimeline = new sap.suite.ui.commons.Timeline({
 			noDataText : "Sorry no messages here",
-			content : oTimelineItem
-		})
+			showFilterBar : false
+		});
 
-		var oImg = new sap.m.Image({
-			src : "https://images4.alphacoders.com/641/thumb-1920-641968.jpg",
-			width : "100%"
-		})
+		oTimeline.bindAggregation("content", {
+			path : "chat>/current_chat",
+			template : new sap.suite.ui.commons.TimelineItem({
+				dateTime : "{chat>timestamp}",
+				text : "{chat>message}",
+				userName : "{chat>username}",
+				icon : "sap-icon://person-placeholder"
+			})
+		});
 
 		var oScrollContainer = new sap.m.ScrollContainer({
 			width : "100%",
-			height : "75%",
+			height : "90%",
 			horizontal : false,
 			vertical : true,
 			content : [ oTimeline ]
@@ -81,12 +45,12 @@ sap.ui.jsview("chatapp.chat", {
 
 		var oInp = new sap.m.Input({
 			placeholder : "Enter your message and Press ↵ to submit.",
-			submit: [oController.sendMessage, oController]
+			submit : [ oController.sendMessage, oController ]
 		});
 
 		return new sap.m.Page({
-			title : "Title",
-			content : [ oTable, oScrollContainer, oInp ]
+			title : "{chat>/current_room}",
+			content : [ oScrollContainer, oInp ]
 		});
 	}
 

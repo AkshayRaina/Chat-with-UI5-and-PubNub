@@ -10,39 +10,53 @@ sap.ui.controller("chatapp.chat", {
 	 */
 	onInit : function() {
 		var oData = {
-			one_piece : [],
+			current_room: "Please select a room",
+			current_chat: [],
 			subscribed_channels : []
 		};
 		var oModelCh = new sap.ui.model.json.JSONModel();
 		oModelCh.setData(oData);
 		sap.ui.getCore().setModel(oModelCh, "chat");
+		console.log(sap.ui.getCore().getModel("chat").getData());
 		var oModel = new sap.ui.model.json.JSONModel();
 		sap.ui.getCore().setModel(oModel, "table");
 		pubnub.addListener({
 			message: function(message) {
 				console.log(message);
-				if(!sap.ui.getCore().getModel("chat").getData().hasOwnProperty(message.channel)) {
-					sap.ui.getCore().getModel("chat").getData()[message.channel] = [];
+				var oDataAppend = sap.ui.getCore().getModel("chat").getData();
+				if(!oDataAppend.hasOwnProperty(message.channel)) {
+					oDataAppend[message.channel] = [];
 				}
-				sap.ui.getCore().getModel("chat").getData()[message.channel].push({
+				oDataAppend[message.channel].push({
 					"message": message.message.message,
 					"username": message.message.username,
-					"timestamp": message.message.timestamp
+					"timestamp": Date(message.message.timestamp)
 				});
-				console.log(sap.ui.getCore().getModel("chat").getData());
+				console.log(oDataAppend);
+				if(message.channel == channel) {
+					oDataAppend["current_chat"].push({
+						"message": message.message.message,
+						"username": message.message.username,
+						"timestamp": Date(message.message.timestamp)
+					});
+				}
+				oModelCh.refresh();
 			}
 		});
 	},
 
 	sendMessage : function(oEvt) {
 		var sValue = oEvt.getSource().getValue();
+		if(sValue == "") {
+			return;
+		}
 		var oGroup = sap.ui.getCore().getModel("table").getData();
 		if(oGroup[0] && oGroup[0].Channel) {
 			pubnub.publish({
 		        message: {
 		            message: sValue,
 		            timestamp: new Date(),
-		            username: pubnub.getUUID()
+		            username: sName || pubnub.getUUID()
 		        },
 		        channel: oGroup[0].Channel
 		    },

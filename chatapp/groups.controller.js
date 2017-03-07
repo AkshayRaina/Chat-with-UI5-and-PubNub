@@ -32,6 +32,7 @@ sap.ui.controller("chatapp.groups", {
 				Description : "Do you like Capsicum?"
 			} ]
 		};
+		sName = "";
 		// create some dummy JSON oData
 		this.oDataTable = oData;
 		channel = "";
@@ -50,7 +51,8 @@ sap.ui.controller("chatapp.groups", {
 	
 	subscribeToChannel : function(sChannel) {
 //		Subscribe to channel after checking whether already subscribed.
-		var aSubscribedChannels = sap.ui.getCore().getModel("chat").getData().subscribed_channels;
+		var oChatData = sap.ui.getCore().getModel("chat").getData();
+		var aSubscribedChannels = oChatData.subscribed_channels;
 		console.log(aSubscribedChannels);
 		var bIsAlreadySubscribed = false;
 		for(var i=0;i<aSubscribedChannels.length;i++) {
@@ -60,7 +62,7 @@ sap.ui.controller("chatapp.groups", {
 			}
 		}
 		if(!bIsAlreadySubscribed) {
-			sap.ui.getCore().getModel("chat").getData().subscribed_channels.push(sChannel);
+			oChatData.subscribed_channels.push(sChannel);
 //			pubnub subscribe
 			pubnub.subscribe({
 				channels: [sChannel]
@@ -72,16 +74,29 @@ sap.ui.controller("chatapp.groups", {
 		var sClickedData = oEvt.getSource().getTitle();
 		var oData = this.oDataTable;
 		var oNewData = [];
+		var oChatData = sap.ui.getCore().getModel("chat").getData();
+		oChatData["current_chat"] = [];
+		oChatData["current_room"] = sClickedData;
+		console.log(oChatData);
 		for (var i = 0; i < oData["names"].length; i++) {
 			if (oData["names"][i]["Name"] === sClickedData) {
 				oNewData.push(oData["names"][i]);
-				channel = oData["names"][i]["Channel"]
+				channel = oData["names"][i]["Channel"];
+				if(oChatData[channel] != undefined)
+					oChatData["current_chat"] = oChatData[channel].slice();
 			}
 		}
+		sap.ui.getCore().getModel("chat").refresh();
 		console.log(oNewData);
 		sap.ui.getCore().getModel("table").setData(oNewData);
 		this.subscribeToChannel(oNewData[0]["Channel"]);
 	},
+	
+	changeName : function(oEvt) {
+		sName = oEvt.getSource().getValue();
+		alert("Name Changed");
+		return;
+	}
 
 /**
  * Similar to onAfterRendering, but this hook is invoked before the controller's

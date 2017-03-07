@@ -13,6 +13,11 @@ sap.ui.jsview("chatapp.groups", {
 	* @memberOf chatapp.groups
 	*/ 
 	createContent : function(oController) {
+		var oInp = new sap.m.Input({
+			placeholder : "Enter your name and Press ↵ to submit.",
+			submit : [ oController.changeName, oController ]
+		});
+		
 		var oList = new sap.m.List({
 			headerText: "Chat Groups"
 		});
@@ -30,7 +35,7 @@ sap.ui.jsview("chatapp.groups", {
  		return new sap.m.Page({
 			title: "ChatApp",
 			content: [
-				oList
+				oInp, oList
 			]
 		});
 	}
