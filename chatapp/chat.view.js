@@ -22,7 +22,9 @@ sap.ui.jsview("chatapp.chat", {
 
 		var oTimeline = new sap.suite.ui.commons.Timeline({
 			noDataText : "Sorry no messages here",
-			showFilterBar : false
+			showFilterBar : false,
+			width : "80%",
+			enableScroll : false
 		});
 
 		oTimeline.bindAggregation("content", {

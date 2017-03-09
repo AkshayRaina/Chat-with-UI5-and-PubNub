@@ -25,7 +25,7 @@ sap.ui.controller("chatapp.groups", {
 			}, {
 				Name : "Pokemon",
 				Channel : "pokemon",
-				Description : "Gotta Catch 'em All"
+				Description : "Caught 'em All"
 			}, {
 				Name : "ShinChan",
 				Channel : "shinchan",
@@ -34,7 +34,7 @@ sap.ui.controller("chatapp.groups", {
 		};
 		sName = "";
 		// create some dummy JSON oData
-		this.oDataTable = oData;
+//		this.oDataTable = oData;
 		channel = "";
 
 		// create a oModel with this oData
@@ -72,7 +72,7 @@ sap.ui.controller("chatapp.groups", {
 
 	enterGroup : function(oEvt) {
 		var sClickedData = oEvt.getSource().getTitle();
-		var oData = this.oDataTable;
+		var oData = sap.ui.getCore().getModel("list").getData();
 		var oNewData = [];
 		var oChatData = sap.ui.getCore().getModel("chat").getData();
 		oChatData["current_chat"] = [];
@@ -94,7 +94,10 @@ sap.ui.controller("chatapp.groups", {
 	
 	changeName : function(oEvt) {
 		sName = oEvt.getSource().getValue();
-		alert("Name Changed");
+		sap.m.MessageToast.show("Name Changed", {
+			my: "center top",
+			at: "center top"
+		});
 		return;
 	}
 

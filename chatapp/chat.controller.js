@@ -65,7 +65,10 @@ sap.ui.controller("chatapp.chat", {
 			});
 			oEvt.getSource().setValue("");
 		} else {
-			alert("Choose a group first")
+			sap.m.MessageToast.show("Choose a group first", {
+				my: "center top",
+				at: "center top"
+			});
 		}
 	}
 
